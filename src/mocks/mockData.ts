@@ -111,12 +111,14 @@ export function seedBookedSlots(courtId: string, date: string): TimeSlot[] {
 // ---- Users ----
 interface StoredUser extends User {
   password: string;
+  username: string;
 }
 
 export const userStore = {
   all: (): StoredUser[] => read(KEYS.users, []),
   save: (users: StoredUser[]) => write(KEYS.users, users),
   findByEmail: (email: string) => userStore.all().find((u) => u.email === email),
+  findByUsername: (username: string) => userStore.all().find((u) => u.username === username),
 };
 
 // ---- Bookings ----
@@ -148,6 +150,7 @@ export function newId(prefix: string) {
         email: 'demo@bookingcourts.vn',
         full_name: 'Người dùng Demo',
         password: 'demo123456',
+        username: 'demo',
       },
     ]);
   }

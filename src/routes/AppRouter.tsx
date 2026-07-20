@@ -8,6 +8,7 @@ import MyBookingsPage from '@/pages/bookings/MyBookingsPage';
 import BookingCheckoutPage from '@/pages/bookings/BookingCheckoutPage';
 import PaymentHistoryPage from '@/pages/payments/PaymentHistoryPage';
 import PaymentDetailPage from '@/pages/payments/PaymentDetailPage';
+import {ConfirmationPage} from '@/pages/auth/ConfirmationPage';
 import { ProtectedRoute } from './ProtectedRoute';
 
 export function AppRouter() {
@@ -16,6 +17,7 @@ export function AppRouter() {
       <Route path="/" element={<HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
+      <Route path="/confirm" element={<ConfirmationPage />} />
 
       <Route path="/courts" element={<CourtSearchPage />} />
       <Route path="/courts/:courtId" element={<CourtDetailPage />} />

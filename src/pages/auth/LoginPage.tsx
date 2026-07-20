@@ -5,7 +5,7 @@ import { useAuth } from '@/contexts/AuthContext';
 export default function LoginPage() {
   const { login, loginWithOAuth } = useAuth();
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,10 +15,10 @@ export default function LoginPage() {
     setError(null);
     setIsSubmitting(true);
     try {
-      await login({ email, password });
+      await login({ username, password });
       navigate('/');
     } catch {
-      setError('Email hoặc mật khẩu không đúng.');
+      setError('Tên đăng nhập hoặc mật khẩu không đúng.');
     } finally {
       setIsSubmitting(false);
     }
@@ -43,7 +43,7 @@ export default function LoginPage() {
           <p className="text-body-md text-on-surface-variant mt-1">Đăng nhập để tiếp tục</p>
           {import.meta.env.VITE_USE_MOCK_API === 'true' && (
             <p className="text-label-sm text-on-surface-variant mt-2 bg-surface-container-low rounded-lg px-3 py-2">
-              <span className="font-bold">demo123456</span>, hoặc đăng ký tài khoản mới bất kỳ.
+              <span className="font-bold">demo_user / demo123456</span>, hoặc đăng ký tài khoản mới.
             </p>
           )}
         </div>
@@ -53,12 +53,12 @@ export default function LoginPage() {
         {import.meta.env.VITE_USE_MOCK_API === 'true' && (
           <button
             onClick={async () => {
-              setEmail('demo@bookingcourts.vn');
+              setUsername('demo_user');
               setPassword('demo123456');
               setError(null);
               setIsSubmitting(true);
               try {
-                await login({ email: 'demo@bookingcourts.vn', password: 'demo123456' });
+                await login({ username: 'demo_user', password: 'demo123456' });
                 navigate('/');
               } catch {
                 setError('Không thể đăng nhập demo.');
@@ -75,14 +75,14 @@ export default function LoginPage() {
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div>
-            <label className="text-label-sm text-on-surface-variant">Email</label>
+            <label className="text-label-sm text-on-surface-variant">Tên đăng nhập</label>
             <input
-              type="email"
+              type="text"
               required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
               className="w-full mt-1 px-4 py-3 rounded-lg border border-outline-variant focus:border-primary outline-none"
-              placeholder="ban@email.com"
+              placeholder="Nhập tên đăng nhập"
             />
           </div>
           <div>

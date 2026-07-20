@@ -1,12 +1,14 @@
 export interface User {
   user_id: string;
   cognito_sub: string;
+  username: string;
   email: string;
   full_name: string;
 }
 
 // 1. POST /api/v1/auth/register
 export interface RegisterRequest {
+  username: string;
   email: string;
   password: string;
   full_name: string;
@@ -18,7 +20,7 @@ export interface RegisterResponse {
 
 // 2. POST /api/v1/auth/login
 export interface LoginRequest {
-  email: string;
+  username: string;
   password: string;
 }
 export interface AuthTokens {

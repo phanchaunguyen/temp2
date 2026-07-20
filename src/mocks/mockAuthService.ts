@@ -23,10 +23,14 @@ export const mockAuthService = {
     if (userStore.findByEmail(payload.email)) {
       return Promise.reject({ response: { status: 409, data: { detail: 'Email đã được sử dụng.' } } });
     }
+    if (userStore.findByUsername(payload.username)) {
+      return Promise.reject({ response: { status: 409, data: { detail: 'Tên người dùng đã được sử dụng.' } } });
+    }
     const user_id = newId('user');
-    const user: User & { password: string } = {
+    const user: User & { password: string; username: string } = {
       user_id,
       cognito_sub: newId('sub'),
+      username: payload.username, 
       email: payload.email,
       full_name: payload.full_name,
       password: payload.password,
@@ -35,11 +39,24 @@ export const mockAuthService = {
     return delay({ user_id, message: 'Success' });
   },
 
+  // login: async (payload: LoginRequest): Promise<LoginResponse> => {
+  //   const user = userStore.findByEmail(payload.email);
+  //   if (!user || user.password !== payload.password) {
+  //     return Promise.reject({ response: { status: 401, data: { detail: 'Email hoặc mật khẩu không đúng.' } } });
+  //   }
+  //   const { password, ...user_data } = user;
+  //   return delay({ ...makeTokens(user.user_id), user_data });
+  // },
+
   login: async (payload: LoginRequest): Promise<LoginResponse> => {
-    const user = userStore.findByEmail(payload.email);
+    
+    const users = userStore.all();
+    const user = users.find(u => u.username === payload.username); 
+
     if (!user || user.password !== payload.password) {
-      return Promise.reject({ response: { status: 401, data: { detail: 'Email hoặc mật khẩu không đúng.' } } });
+      return Promise.reject({ response: { status: 401, data: { detail: 'Username hoặc mật khẩu không đúng.' } } });
     }
+    
     const { password, ...user_data } = user;
     return delay({ ...makeTokens(user.user_id), user_data });
   },
@@ -52,6 +69,7 @@ export const mockAuthService = {
       user = {
         user_id: newId('user'),
         cognito_sub: newId('sub'),
+        username: `${payload.provider}-demo`,
         email,
         full_name: payload.provider === 'google' ? 'Google Demo User' : 'Facebook Demo User',
         password: '',
