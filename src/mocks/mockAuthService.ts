@@ -9,6 +9,7 @@ import {
   RegisterRequest,
   RegisterResponse,
   User,
+  ConfirmRequest
 } from '@/types/auth.types';
 
 function makeTokens(userId: string) {
@@ -20,74 +21,58 @@ function makeTokens(userId: string) {
 
 export const mockAuthService = {
   register: async (payload: RegisterRequest): Promise<RegisterResponse> => {
-    if (userStore.findByEmail(payload.email)) {
-      return Promise.reject({ response: { status: 409, data: { detail: 'Email đã được sử dụng.' } } });
-    }
-    if (userStore.findByUsername(payload.username)) {
-      return Promise.reject({ response: { status: 409, data: { detail: 'Tên người dùng đã được sử dụng.' } } });
-    }
-    const user_id = newId('user');
-    const user: User & { password: string; username: string } = {
-      user_id,
-      cognito_sub: newId('sub'),
-      username: payload.username, 
-      email: payload.email,
-      full_name: payload.full_name,
-      password: payload.password,
-    };
-    userStore.save([...userStore.all(), user]);
-    return delay({ user_id, message: 'Success' });
+    console.log('[MOCK] Register:', payload);
+    return { user_id: 'mock-user-id', message: 'Success' };
   },
 
-  // login: async (payload: LoginRequest): Promise<LoginResponse> => {
-  //   const user = userStore.findByEmail(payload.email);
-  //   if (!user || user.password !== payload.password) {
-  //     return Promise.reject({ response: { status: 401, data: { detail: 'Email hoặc mật khẩu không đúng.' } } });
-  //   }
-  //   const { password, ...user_data } = user;
-  //   return delay({ ...makeTokens(user.user_id), user_data });
-  // },
+  // 2. Add the missing confirmRegistration method
+  confirmRegistration: async (payload: ConfirmRequest): Promise<{ message: string }> => {
+    console.log('[MOCK] Confirm Registration:', payload);
+    return { message: 'Account confirmed successfully' };
+  },
 
   login: async (payload: LoginRequest): Promise<LoginResponse> => {
+    console.log('[MOCK] Login:', payload);
     
-    const users = userStore.all();
-    const user = users.find(u => u.username === payload.username); 
-
-    if (!user || user.password !== payload.password) {
-      return Promise.reject({ response: { status: 401, data: { detail: 'Username hoặc mật khẩu không đúng.' } } });
+    // 3. Update 'username' to 'identifier' to match the new LoginRequest type
+    if (payload.identifier === 'demo_user' && payload.password === 'demo123456') {
+      return {
+        access_token: 'mock-access-token',
+        refresh_token: 'mock-refresh-token',
+        user_data: {
+          id: 1,
+          cognito_sub: 'mock-cognito-sub',
+          email: 'demo@example.com',
+          username: 'demo_user',
+          full_name: 'Demo User',
+          phone_number: '0123456789',
+        },
+      };
     }
-    
-    const { password, ...user_data } = user;
-    return delay({ ...makeTokens(user.user_id), user_data });
+    throw new Error('Invalid credentials');
   },
 
-  // Demo OAuth: auto-provisions a user for the chosen provider, no real redirect.
   oauth: async (payload: OAuthRequest): Promise<OAuthResponse> => {
-    const email = `${payload.provider}.demo@bookingcourts.vn`;
-    let user = userStore.findByEmail(email);
-    if (!user) {
-      user = {
-        user_id: newId('user'),
-        cognito_sub: newId('sub'),
-        username: `${payload.provider}-demo`,
-        email,
-        full_name: payload.provider === 'google' ? 'Google Demo User' : 'Facebook Demo User',
-        password: '',
-      };
-      userStore.save([...userStore.all(), user]);
-    }
-    const { password, ...user_data } = user;
-    return delay({ ...makeTokens(user.user_id), user_data });
+    console.log('[MOCK] OAuth Login:', payload);
+    return {
+      access_token: 'mock-oauth-access-token',
+      refresh_token: 'mock-oauth-refresh-token',
+      user_data: {
+        id: 2,
+        cognito_sub: 'mock-oauth-sub',
+        email: `oauth-${payload.provider}@example.com`,
+        username: `oauth_${payload.provider}`,
+        full_name: `${payload.provider} User`,
+      },
+    };
   },
 
   refresh: async (payload: RefreshRequest): Promise<RefreshResponse> => {
-    if (!payload.refresh_token?.startsWith('mock-refresh-')) {
-      return Promise.reject({ response: { status: 401, data: { detail: 'Refresh token không hợp lệ.' } } });
-    }
-    return delay({ access_token: `mock-access-${Date.now()}` });
+    console.log('[MOCK] Refresh token:', payload.refresh_token);
+    return { access_token: 'mock-new-access-token' };
   },
 
   logout: async (): Promise<void> => {
-    return delay(undefined, 200);
+    console.log('[MOCK] Logout');
   },
 };
