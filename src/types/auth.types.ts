@@ -23,6 +23,10 @@ export interface ConfirmRequest {
   code: string;     // The 6-digit OTP code
 }
 
+export interface ConfirmResponse {
+  message: string;
+}
+
 // 2. POST /api/v1/auth/login
 export interface LoginRequest {
   identifier: string;
@@ -55,3 +59,14 @@ export interface RefreshResponse {
 }
 
 // 5. POST /api/v1/auth/logout — Bearer token header only, 204 No Content
+
+
+
+export interface AuthServiceContract {
+  register: (payload: RegisterRequest) => Promise<RegisterResponse>;
+  login: (payload: LoginRequest) => Promise<LoginResponse>;
+  confirmRegistration: (payload: ConfirmRequest) => Promise<ConfirmResponse>;
+  oauth: (payload: OAuthRequest) => Promise<OAuthResponse>;
+  refresh: (payload: RefreshRequest) => Promise<RefreshResponse>;
+  logout: () => Promise<void>;
+}

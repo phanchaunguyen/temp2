@@ -9,7 +9,9 @@ import {
   RegisterRequest,
   RegisterResponse,
   User,
-  ConfirmRequest
+  ConfirmRequest,
+  ConfirmResponse,
+  AuthServiceContract
 } from '@/types/auth.types';
 
 function makeTokens(userId: string) {
@@ -19,22 +21,14 @@ function makeTokens(userId: string) {
   };
 }
 
-export const mockAuthService = {
+export const mockAuthService: AuthServiceContract = {
   register: async (payload: RegisterRequest): Promise<RegisterResponse> => {
     console.log('[MOCK] Register:', payload);
     return { user_id: 'mock-user-id', message: 'Success' };
   },
 
-  // 2. Add the missing confirmRegistration method
-  confirmRegistration: async (payload: ConfirmRequest): Promise<{ message: string }> => {
-    console.log('[MOCK] Confirm Registration:', payload);
-    return { message: 'Account confirmed successfully' };
-  },
-
   login: async (payload: LoginRequest): Promise<LoginResponse> => {
     console.log('[MOCK] Login:', payload);
-    
-    // 3. Update 'username' to 'identifier' to match the new LoginRequest type
     if (payload.identifier === 'demo_user' && payload.password === 'demo123456') {
       return {
         access_token: 'mock-access-token',
@@ -50,6 +44,11 @@ export const mockAuthService = {
       };
     }
     throw new Error('Invalid credentials');
+  },
+
+  confirmRegistration: async (payload: ConfirmRequest): Promise<ConfirmResponse> => {
+    console.log('[MOCK] Confirm Registration:', payload);
+    return { message: 'Account confirmed successfully' };
   },
 
   oauth: async (payload: OAuthRequest): Promise<OAuthResponse> => {

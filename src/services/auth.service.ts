@@ -10,6 +10,8 @@ import {
   RegisterRequest,
   RegisterResponse,
   ConfirmRequest,
+  ConfirmResponse,
+  AuthServiceContract 
 } from '@/types/auth.types';
 
 import { 
@@ -27,7 +29,7 @@ import {
 // This lets the UI be tested end-to-end before the backend is deployed.
 const USE_MOCK = import.meta.env.VITE_USE_MOCK_API === 'true';
 
-const realAuthService = {
+const realAuthService: AuthServiceContract = {
   // 1. POST /api/v1/auth/register
   register: (payload: RegisterRequest) =>
     apiClient.post<RegisterResponse>('/auth/register', payload).then((r) => r.data),
@@ -52,4 +54,4 @@ const realAuthService = {
   logout: () => apiClient.post<void>('/auth/logout'),
 };
 
-export const authService = USE_MOCK ? mockAuthService : realAuthService;
+export const authService: AuthServiceContract = USE_MOCK ? mockAuthService : realAuthService;
