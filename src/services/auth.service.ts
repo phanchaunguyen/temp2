@@ -51,7 +51,7 @@ const realAuthService: AuthServiceContract = {
     apiClient.post<RefreshResponse>('/auth/refresh', payload).then((r) => r.data),
 
   // 5. POST /api/v1/auth/logout
-  logout: () => apiClient.post<void>('/auth/logout'),
+  logout: () => apiClient.post<void>('/auth/logout').then(() => {}),
 };
 
 export const authService: AuthServiceContract = USE_MOCK ? mockAuthService : realAuthService;

@@ -34,7 +34,7 @@ export const mockAuthService: AuthServiceContract = {
         access_token: 'mock-access-token',
         refresh_token: 'mock-refresh-token',
         user_data: {
-          id: 1,
+          user_id: '1',
           cognito_sub: 'mock-cognito-sub',
           email: 'demo@example.com',
           username: 'demo_user',
@@ -57,11 +57,12 @@ export const mockAuthService: AuthServiceContract = {
       access_token: 'mock-oauth-access-token',
       refresh_token: 'mock-oauth-refresh-token',
       user_data: {
-        id: 2,
+        user_id: '2',
         cognito_sub: 'mock-oauth-sub',
         email: `oauth-${payload.provider}@example.com`,
         username: `oauth_${payload.provider}`,
         full_name: `${payload.provider} User`,
+        phone_number: '0123456789',
       },
     };
   },

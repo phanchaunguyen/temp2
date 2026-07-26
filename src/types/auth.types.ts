@@ -4,6 +4,7 @@ export interface User {
   username: string;
   email: string;
   full_name: string;
+  phone_number?: string;
 }
 
 // 1. POST /api/v1/auth/register
