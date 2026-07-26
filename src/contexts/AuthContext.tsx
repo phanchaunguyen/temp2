@@ -9,6 +9,7 @@ interface AuthContextValue {
   isLoading: boolean;
   login: (payload: LoginRequest) => Promise<void>;
   register: (payload: RegisterRequest) => Promise<void>;
+  confirmRegistration: (username: string, code: string) => Promise<void>; 
   loginWithOAuth: (payload: OAuthRequest) => Promise<void>;
   logout: () => Promise<void>;
 }
@@ -41,7 +42,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           const response = await apiClient.get('/users/me');
           setUser(response.data);
         } catch {
-          // Token expired
+          // Token expired or invalid
           localStorage.removeItem('access_token');
           localStorage.removeItem('refresh_token');
           localStorage.removeItem(USER_KEY);
@@ -63,6 +64,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await authService.register(payload);
   }, []);
 
+  const confirmRegistration = useCallback(async (username: string, code: string) => {
+    await authService.confirmRegistration({ username, code });
+  }, []);
+
   const loginWithOAuth = useCallback(async (payload: OAuthRequest) => {
     const res = await authService.oauth(payload);
     persistSession(res.user_data, res.access_token, res.refresh_token);
@@ -72,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await authService.logout();
     } catch {
+      // Ignore network errors on logout
     } finally {
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
@@ -82,7 +88,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, isLoading, login, register, loginWithOAuth, logout }}
+      value={{ 
+        user, 
+        isAuthenticated: !!user, 
+        isLoading, 
+        login, 
+        register, 
+        confirmRegistration, 
+        loginWithOAuth, 
+        logout 
+      }}
     >
       {children}
     </AuthContext.Provider>

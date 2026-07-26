@@ -9,6 +9,7 @@ import {
   RefreshResponse,
   RegisterRequest,
   RegisterResponse,
+  ConfirmRequest,
 } from '@/types/auth.types';
 
 import { 
@@ -30,6 +31,10 @@ const realAuthService = {
   // 1. POST /api/v1/auth/register
   register: (payload: RegisterRequest) =>
     apiClient.post<RegisterResponse>('/auth/register', payload).then((r) => r.data),
+
+  // 1b. POST /api/v1/auth/confirm
+  confirmRegistration: (payload: ConfirmRequest) =>
+    apiClient.post('/auth/confirm', payload).then((r) => r.data),
 
   // 2. POST /api/v1/auth/login
   login: (payload: LoginRequest) =>

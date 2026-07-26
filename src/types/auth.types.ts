@@ -18,9 +18,14 @@ export interface RegisterResponse {
   message: string; // "Success"
 }
 
+export interface ConfirmRequest {
+  username: string; 
+  code: string;     // The 6-digit OTP code
+}
+
 // 2. POST /api/v1/auth/login
 export interface LoginRequest {
-  username: string;
+  identifier: string;
   password: string;
 }
 export interface AuthTokens {
